@@ -1,0 +1,56 @@
+#nginx
+
+1.Create a local folder and make an index.html file inside it:
+
+Bash
+mkdir my-nginx-site && cd my-nginx-site
+echo "<h1>Welcome to C-DAC</h1>" > index.html
+
+
+2.Run the Nginx container by mounting your local folder into Nginx's default HTML web root directory (/usr/share/nginx/html):
+
+Bash
+docker run -d -p 8080:80 --name my-nginx-container -v $(pwd):/usr/share/nginx/html nginx:latest
+
+
+3.Verify: Open your browser and go to http://localhost:8080. You should see Welcome to C-DAC.
+
+
+#Apache
+
+1.Create a local folder and create your custom index.html:
+
+Bash
+mkdir my-apache-site && cd my-apache-site
+echo "<h1>Welcome to C-DAC</h1>" > index.html
+
+
+2.Run the Apache container by mounting your local directory into Apache's default web root (/usr/local/apache2/htdocs/):
+
+Bash
+docker run -d -p 8080:80 --name my-apache-container -v $(pwd):/usr/local/apache2/htdocs/ httpd:2.4
+
+
+3.Verify: Open your browser and go to http://localhost:8080. You should see Welcome to C-DAC.
+===============================================================
+
+#docker
+
+# Pull images
+docker pull ubuntu:latest
+docker pull mysql:latest
+
+# Run Ubuntu interactively
+docker run -it ubuntu:latest bash
+
+# Run MySQL in the background
+docker run --name mysql-db -e MYSQL_ROOT_PASSWORD=secretpassword -d mysql:latest
+
+# Build an image from a Dockerfile
+docker build -t my-app:latest .
+
+# Check running containers
+docker ps
+
+# Stop a container
+docker stop mysql-db
