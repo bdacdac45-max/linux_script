@@ -1,0 +1,178 @@
+1. Digital Library Service – Nginx
+This task containerizes a simple static Digital Library web page using Nginx. An Nginx Docker image serves index.html, and port 80 of the container is mapped to host port 8090 to access the service through a browser.
+
+1. Create a folder
+mkdir digital-library
+cd digital-library
+
+
+2. Create index.html
+nano index.html
+Put this inside:
+
+HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Digital Library</title>
+</head>
+<body>
+    <h1>Digital Library Service is running successfully!</h1>
+</body>
+</html>
+
+Save: Ctrl + O → Enter → Ctrl + X
+
+
+3. Create Dockerfile
+nano Dockerfile
+Write:
+FROM nginx:latest
+
+COPY index.html /usr/share/nginx/html/
+
+EXPOSE 80
+Save and exit.
+⚠️ The question says nginxtlatest, but the correct Docker image name is nginx:latest.
+
+
+
+
+
+
+4. Build the Docker image
+
+docker build -t digital-libraryivi .
+Check the image:
+docker images
+You should see:
+digital-libraryivi
+
+
+
+
+
+5. Run the container
+docker run -d -p 8090:80 --name digital-library-container digital-libraryivi
+Explanation:
+-d       → detached/background mode
+-p 8090:80 → host 8090 → container 80
+--name   → gives container a name
+Check running containers:
+docker ps
+
+6. Open the website
+Open your browser and go to:
+http://localhost:8090
+
+You should see:
+Digital Library Service is running successfully!
+
+
+7. Open a shell inside the running container
+docker exec -it digital-library-container /bin/bash
+If bash isn't available, use:
+
+docker exec -it digital-library-container /bin/sh
+
+
+8. Display index.html from inside the container
+Inside the container:
+
+cat /usr/share/nginx/html/index.html
+
+You should see:
+HTML
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Digital Library</title>
+</head>
+<body>
+    <h1>Digital Library Service is running successfully!</h1>
+</body>
+</html>
+Exit the container shell:
+exit
+
+==============================================================
+
+2. CPU Utilization Monitor – Python
+This task containerizes a Python CPU monitoring application. The application accepts total CPU time and idle CPU time as input and calculates the CPU utilization percentage. The application runs inside a Docker container using the python:3.9-slim base image.
+
+1. Create a folder
+mkdir cpu-monitor
+cd cpu-monitor
+
+2. Create cpu.py
+nano cpu.py
+Put this code:
+total = float(input("Enter total CPU time: "))
+idle = float(input("Enter idle CPU time: "))
+
+utilization = ((total - idle) / total) * 100
+
+print(f"CPU Utilization: {utilization:.2f}%")
+
+Example:
+Total CPU time = 100
+Idle CPU time = 25
+
+CPU Utilization = 75%
+
+Save with Ctrl + O → Enter → Ctrl + X.
+
+
+
+
+
+
+
+
+
+3. Create the Dockerfile
+nano Dockerfile
+Write:
+FROM python:3.9-slim
+
+COPY cpu.py /cpu.py
+
+ENTRYPOINT ["python", "/cpu.py"]
+
+Save and exit.
+What each line does
+FROM python:3.9-slim → Uses Python 3.9 lightweight image.
+COPY cpu.py /cpu.py → Copies our Python program into the container.
+ENTRYPOINT → Runs cpu.py automatically when the container starts.
+
+4. Build the Docker image
+docker build -t cpu-monitor:v1 .
+Check all images:
+docker images
+You should see something like:
+REPOSITORY    TAG    IMAGE ID
+cpu-monitor   v1     xxxxx
+
+5. Run the container interactively
+docker run -it cpu-monitor:v1
+The program will ask:
+Enter total CPU time:
+Enter:
+100
+Then:
+Enter idle CPU time:
+Enter:
+25
+Output:
+CPU Utilization: 75.00%
+✅ This proves the Python application is running inside the Docker container.
+
+
+
+
+6. View all running containers
+docker ps
+Because the program finishes after calculating the value, the container may not appear in docker ps.
+To view all containers, including stopped ones:
+docker ps -a
+
